@@ -1,0 +1,260 @@
+﻿@model EOLCombinationModel
+
+@{
+    ViewData["Title"] = "OrionToVuln";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var objHelperClass = new HelperClass();
+}
+@section Headers
+{
+    <link rel="stylesheet" type="text/css" href="~/assets/extra-libs/prism/prism.css">
+
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="material-card card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <form action="~/Home/OrionToVuln" method="post">
+                        <table>
+                            <tr>
+                                <td class="col-md-8"><input asp-for="@Model.SearchText" type="text" class="form-control" placeholder="Enter Client Name."></td>
+                                <td>
+                                    <input type="date" class="form-control" asp-for="@Model.StartDate" value="@DateTime.Now.AddDays(-7).Date">
+                                </td>
+                                <td>
+                                    <input type="date" class="form-control" asp-for="@Model.EndDate" value="@DateTime.Now.Date">
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="col-md-4"><button type="submit" class="btn btn-primary">Search</button></td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">Orion to Vuln Details</h6>
+               
+                <div class="row">
+                    <div class="col-lg-4 col-xl-3" >
+                        <div class="nav flex-column nav-pills"  id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                            @if (Model.OrionList.Count() > 0)
+                            {
+                                var count = 1;
+                            <table>
+                                @foreach (var item in Model.OrionDistinctList)
+                                {
+                                    var boolValue = "false";
+                                    var str = "";
+                                    if (count == 1)
+                                    {
+                                        boolValue = "true";
+                                        str = "active";
+                                    }
+                                    var dataunq = item.Replace("~", " ");
+                                    var dataunq1 = item.Split("~");
+                                    var desc = dataunq1[0];
+                                    var iosver = dataunq1[1];
+                                    <tr>
+                                        <td>
+                                            <a class="nav-link @str" id="v-pills-@count-tab" data-toggle="pill" href="#v-pills-@count" role="tab" aria-controls="v-pills-@count" aria-selected="@boolValue">
+                                                <table>
+                                                    <tr>
+                                                        <td>Description:</td>
+                                                        <td>@desc</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>IOS Version:</td>
+                                                        <td>@iosver</td>
+                                                    </tr>
+                                                </table>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    count += 1;
+                                }
+                            </table>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-lg-8 col-xl-9">
+                        <div class="tab-content p-4" id="v-pills-tabContent">
+                            @if (Model.OrionList.Count() > 0)
+                            {
+                                var count = 1;
+                                var str = "";
+
+                                @foreach (var itemdisList in Model.OrionDistinctList)
+                                {
+                                    var dataunq = itemdisList.Split("~");
+                                    var desc = dataunq[0];
+                                    var iosver = dataunq[1];
+
+                                    var iosfromRow = iosver;
+                                    var spliVal = iosfromRow.Split(",");
+                                    if (spliVal.Count() > 0)
+                                    {
+                                        iosfromRow = spliVal[0];
+                                    }
+
+                                    if (count == 1)
+                                    {
+                                        str = "show active";
+
+                                    }
+                                    else
+                                    {
+                                        str = "";
+
+                                    }
+                                    var OrionListDisct = Model.OrionList.Where(r => objHelperClass.isAllowed(r, "Description", desc, "IOSVersion", iosver)).ToList();
+
+                                    if (OrionListDisct.Count > 0)
+                                    {
+
+                            <div class="tab-pane fade @str" id="v-pills-@count" role="tabpanel" aria-labelledby="v-pills-@count-tab">
+                                <div class="table-responsive">
+
+                                    <table id="complex_head_col" class="table table-striped table-bordered display" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                @foreach (var key in OrionListDisct[0].Keys)
+                                                {
+                                                    <th> @key </th>
+                                                }
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in OrionListDisct)
+                                            {
+
+                                                <tr>
+
+                                                    @foreach (var itemVal in item)
+                                                    {
+                                                        <td>@itemVal.Value</td>
+                                                    }
+
+                                                </tr>
+
+                                            }
+                                        </tbody>
+                                    </table>
+
+                                </div>
+
+                                @foreach (var currentIOS in spliVal)
+                                {
+                                    if (Model.VuldistList.Where(r => r.Key == currentIOS).Count() > 0)
+                                    {
+                                        var vulnRows = Model.VuldistList.Where(r => r.Key == currentIOS).ToList();
+                                        foreach (var item in vulnRows)
+                                        {
+                                            var vulList = item.Value;
+
+                                            if (vulList.Count > 0)
+                                            {
+                                                <div class="table-responsive">
+
+                                                <table id="complex_head_col1" class="table table-striped table-bordered display" style="width:100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>advisory Id</th>
+                                                            <th>advisory Title</th>
+                                                            <th>bug IDs</th>
+                                                            <th>ips Signatures</th>
+                                                            <th>cvrf Url</th>
+                                                            <th>cvss BaseScore</th>
+                                                            <th>cwe</th>
+                                                            <th>firstPublished</th>
+                                                            <th>lastUpdated</th>
+                                                            <th>status</th>
+                                                            <th>version</th>
+                                                            <th>productNames</th>
+                                                            <th>publicationUrl</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+
+                                                        <tr>
+
+                                                            @foreach (var itemVuln in vulList)
+                                                            {
+                                                                <td>@itemVuln.advisoryId  </td>
+                                                                <td>@itemVuln.advisoryTitle  </td>
+                                                                <td>@itemVuln.bugIDs  </td>
+                                                                <td>@itemVuln.ipsSignatures  </td>
+                                                                <td>@itemVuln.cvrfUrl  </td>
+                                                                <td>@itemVuln.cvssBaseScore  </td>
+                                                                <td>@itemVuln.cwe  </td>
+                                                                <td>@itemVuln.firstPublished  </td>
+                                                                <td>@itemVuln.lastUpdated  </td>
+                                                                <td>@itemVuln.status  </td>
+                                                                <td>@itemVuln.version  </td>
+                                                                <td>@itemVuln.productNames  </td>
+                                                                <td>@itemVuln.publicationUrl  </td>
+                                                            }
+
+                                                        </tr>
+
+
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                            }
+                                        }
+                                    }
+                                }
+
+
+
+                            </div>
+
+
+                                            }
+                                            count += 1;
+
+
+                                            }
+                                            }
+                        </div>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <!--This page JavaScript -->
+    <script src="~/assets/extra-libs/treeview/dist/bootstrap-treeview.min.js"></script>
+    <script src="~/assets/extra-libs/treeview/dist/bootstrap-treeview-init.js"></script>
+    <script src="~/dist/js/custom.min.js"></script>
+    <script src="~/assets/extra-libs/prism/prism.js"></script>
+    <script>
+        function ShowOrionTable(val) {
+            alert("reached");
+            var x = document.getElementsByName("right-table").querySelectorAll("right-part");
+            x.style.display = "none";
+            document.getElementById("Table_" + val).style.display = 'block';
+        }
+
+    </script>
+}

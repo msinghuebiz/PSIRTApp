@@ -1,0 +1,92 @@
+﻿@model IndexModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="material-card card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <form action="~/Home/IndexIOS" method="post">
+                        <table>
+                            <tr>
+                                <td class="col-md-8"><input asp-for="@Model.advisoryID" type="text" class="form-control" placeholder="Enter IOS Version."></td>
+                                <td class="col-md-4"><button type="submit" class="btn btn-primary">Search</button></td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (!(Model.List == null))
+{
+    if (!(Model.List.advisories == null))
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="material-card card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            @if (Model.List.advisories.Count() > 0)
+                            {
+                                <table id="complex_head_col" class="table table-striped table-bordered display" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th> advisoryId </th>
+                                            <th> advisoryTitle </th>
+                                            <th> bugIDs </th>
+                                            <th> ipsSignatures </th>
+                                            <th> cvrfUrl </th>
+                                            <th> cvssBaseScore </th>
+                                            <th> cwe </th>
+                                            <th> firstPublished </th>
+                                            <th> lastUpdated </th>
+                                            <th> status </th>
+                                            <th> version </th>
+                                            <th> productNames </th>
+                                            <th> publicationUrl </th>
+                                            <th> sir </th>
+                                            <th> summary </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.List.advisories)
+                                        {
+
+                                            <tr>
+
+                                                <td>
+                                                    @item.advisoryId
+                                                </td>
+                                                <td>
+                                                    @item.advisoryTitle
+                                                </td>
+                                                <td>@string.Join(",", item.bugIDs)</td>
+                                                <td> @string.Join(",", item.ipsSignatures) </td>
+                                                <td> @item.cvrfUrl </td>
+                                                <td> @item.cvssBaseScore </td>
+                                                <td> @string.Join(",", item.cwe) </td>
+                                                <td> @item.firstPublished </td>
+                                                <td> @item.lastUpdated </td>
+                                                <td> @item.status </td>
+                                                <td> @item.version </td>
+                                                <td> @string.Join(",", item.productNames) </td>
+                                                <td> @item.publicationUrl </td>
+                                                <td> @item.sir </td>
+                                                <td> @Html.Raw(item.summary)</td>
+                                            </tr>
+
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

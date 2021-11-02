@@ -1,0 +1,435 @@
+﻿<!DOCTYPE html>
+<html dir="ltr" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="~/assets/images/favicon.png">
+    <title></title>
+    <environment>
+        <!-- chartist CSS -->
+        <link href="~/assets/libs/chartist/dist/chartist.min.css" rel="stylesheet">
+        <link href="~/assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.css" rel="stylesheet">
+        <!--c3 CSS -->
+        <link href="~/assets/libs/morris.js/morris.css" rel="stylesheet">
+        <link href="~/assets/extra-libs/c3/c3.min.css" rel="stylesheet">
+        <!-- Custom CSS -->
+        <link href="~/assets/libs/fullcalendar/dist/fullcalendar.min.css" rel="stylesheet" />
+        <link href="~/assets/extra-libs/calendar/calendar.css" rel="stylesheet" />
+        <!-- needed css -->
+        <link href="~/dist/css/style.min.css" rel="stylesheet">
+        <!-- Clickable edit   -->
+        <link href="~/assets/libs//x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet" />
+
+        <link rel="stylesheet" type="text/css" href="~/assets/libs/bootstrap-duallistbox/dist/bootstrap-duallistbox.min.css">
+        <link rel="stylesheet" type="text/css" href="~/assets/libs/select2/dist/css/select2.min.css">
+        <!-- This page plugin CSS -->
+        <link href="~/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.css" rel="stylesheet">
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+
+            <![endif]-->
+    </environment>
+    @RenderSection("Headers", required: false)
+
+</head>
+
+<body>
+    <!-- ============================================================== -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- ============================================================== -->
+    <div class="preloader">
+        <div class="lds-ripple">
+            <div class="lds-pos"></div>
+            <div class="lds-pos"></div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- ============================================================== -->
+    <div id="main-wrapper">
+        <!-- ============================================================== -->
+        <!-- Topbar header - style you can find in pages.scss -->
+        <!-- ============================================================== -->
+        <header class="topbar">
+            <nav class="navbar top-navbar navbar-expand-md navbar-dark">
+                <div class="navbar-header">
+                    <!-- This is for the sidebar toggle which is visible on mobile only -->
+                    <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i class="ti-menu ti-close"></i></a>
+                    <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                        <!-- Logo icon -->
+                        <b class="logo-icon">
+                            <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
+                            <!-- Dark Logo icon -->
+                            <img src="~/assets/images/logos/logo-icon.png" alt="homepage" width="230px" height="70px" class="dark-logo" />
+                            <!-- Light Logo icon -->
+                            <img src="~/assets/images/logos/logo-light-icon.png" alt="homepage" class="light-logo" />
+                        </b>
+                        <!--End Logo icon -->
+                    </a>
+                    <!-- ============================================================== -->
+                    <!-- End Logo -->
+                    <!-- ============================================================== -->
+                    <!-- ============================================================== -->
+                    <!-- Toggle which is visible on mobile only -->
+                    <!-- ============================================================== -->
+                    <a class="topbartoggler d-block d-md-none waves-effect waves-light" href="javascript:void(0)" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i class="ti-more"></i></a>
+                </div>
+                <!-- ============================================================== -->
+                <!-- End Logo -->
+                <!-- ============================================================== -->
+                <div class="navbar-collapse collapse" id="navbarSupportedContent">
+                    <!-- ============================================================== -->
+                    <!-- toggle and nav items -->
+                    <!-- ============================================================== -->
+                    <ul class="navbar-nav float-left mr-auto">
+                        <li class="nav-item d-none d-md-block"><a class="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0)" data-sidebartype="mini-sidebar"><i class="mdi mdi-menu font-18"></i></a></li>
+
+                    </ul>
+                    <!-- ============================================================== -->
+                    <!-- Right side toggle and nav items -->
+                    <!-- ============================================================== -->
+                    <ul class="navbar-nav float-right">
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-- ============================================================== -->
+        <!-- End Topbar header -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+        <aside class="left-sidebar">
+            <!-- Sidebar scroll-->
+            <div class="scroll-sidebar">
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav">
+                        <!-- User Profile-->
+                        <li>
+                            <!-- User Profile-->
+                            <!--<div class="user-profile text-center dropdown p-3">
+        <div class="user-pic"><img src="~/assets/images/users/1.jpg" alt="users" class="rounded-circle" width="50" /></div>
+        <div class="user-content hide-menu">
+            <a href="javascript:void(0)" class="mt-2" id="Userdd" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <h5 class="mb-0 user-name mt-2"> <i class="fa fa-angle-down"></i></h5>
+            </a>-->
+                            @*<div class="dropdown-menu dropdown-menu-left" aria-labelledby="Userdd">
+                <a class="dropdown-item" href="javascript:void(0)"><i class="ti-user m-r-5 m-l-5"></i> My Profile</a>
+                <a class="dropdown-item" href="javascript:void(0)"><i class="ti-wallet m-r-5 m-l-5"></i> My Balance</a>
+                <a class="dropdown-item" href="javascript:void(0)"><i class="ti-email m-r-5 m-l-5"></i> Inbox</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="javascript:void(0)"><i class="ti-settings m-r-5 m-l-5"></i> Account Setting</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="javascript:void(0)"><i class="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
+            </div>*@
+                            <!--</div>
+        </div>-->
+                            <!-- End User Profile-->
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                                <i class="mdi mdi-av-timer"></i>
+                                <span class="hide-menu">Dashboard</span>
+                                <span class="badge badge-inverse badge-pill ml-auto mr-3 font-medium px-2 py-1">6</span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse  first-level">
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="Index" class="sidebar-link">
+                                        <i class="mdi mdi-adjust"></i>
+                                        <span class="hide-menu"> Dashboard </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                                <i class="mdi mdi-cart-outline"></i>
+                                <span class="hide-menu"> Advisories </span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse first-level">
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="Index" class="sidebar-link">
+                                        <i class="mdi mdi-cart"></i>
+                                        <span class="hide-menu"> Get Advisories </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="IndexCVE" class="sidebar-link">
+                                        <i class="mdi mdi-cart"></i>
+                                        <span class="hide-menu"> Get CVE List </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="IndexLatest" class="sidebar-link">
+                                        <i class="mdi mdi-cart"></i>
+                                        <span class="hide-menu"> Get Latest List </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="IndexProduct" class="sidebar-link">
+                                        <i class="mdi mdi-cart"></i>
+                                        <span class="hide-menu"> Get List by Product Name </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="IndexYear" class="sidebar-link">
+                                        <i class="mdi mdi-cart"></i>
+                                        <span class="hide-menu"> Get List by Year </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="IndexIOS" class="sidebar-link">
+                                        <i class="mdi mdi-cart"></i>
+                                        <span class="hide-menu"> Get List by IOS Version </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="IndexIOSXE" class="sidebar-link">
+                                        <i class="mdi mdi-cart"></i>
+                                        <span class="hide-menu"> Get List by IOSXE Version </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="IndexNXOS" class="sidebar-link">
+                                        <i class="mdi mdi-cart"></i>
+                                        <span class="hide-menu"> Get List by NX-OS Version </span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="IndexNXOSACI" class="sidebar-link">
+                                        <i class="mdi mdi-cart"></i>
+                                        <span class="hide-menu"> Get List by NX-OS (ACI mode) </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                                <i class="mdi mdi-cart-outline"></i>
+                                <span class="hide-menu"> Orion </span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse first-level">
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="Orion" class="sidebar-link">
+                                        <i class="mdi mdi-cart"></i>
+                                        <span class="hide-menu"> Get Orion Nodes </span>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                                <i class="mdi mdi-cart-outline"></i>
+                                <span class="hide-menu"> Combination </span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse first-level">
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="VulnToOrion" class="sidebar-link">
+                                        <i class="mdi mdi-cart"></i>
+                                        <span class="hide-menu"> Vuln to Orion </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="OrionToVuln" class="sidebar-link">
+                                        <i class="mdi mdi-cart"></i>
+                                        <span class="hide-menu"> Orion to Vuln </span>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                                <i class="mdi mdi-cart-outline"></i>
+                                <span class="hide-menu"> Reporting </span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse first-level">
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="EOLOrion" class="sidebar-link">
+                                        <i class="mdi mdi-cart"></i>
+                                        <span class="hide-menu"> EOL - Orion </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="ConsolidatedReport" class="sidebar-link">
+                                        <i class="mdi mdi-cart"></i>
+                                        <span class="hide-menu"> Consolidated Report </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="CiscoEOLHW" class="sidebar-link">
+                                        <i class="mdi mdi-cart"></i>
+                                        <span class="hide-menu"> Cisco EOL HW </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="CiscoEOLSW" class="sidebar-link">
+                                        <i class="mdi mdi-cart"></i>
+                                        <span class="hide-menu"> Cisco EOL SW </span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a asp-controller="Home" asp-action="CiscoPSIRT" class="sidebar-link">
+                                        <i class="mdi mdi-cart"></i>
+                                        <span class="hide-menu"> Cisco PSIRT </span>
+                                    </a>
+                                </li>
+
+                            </ul>
+                          
+                        </li>
+                    </ul>
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </aside>
+        <!-- ============================================================== -->
+        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Page wrapper  -->
+        <!-- ============================================================== -->
+        <div class="page-wrapper">
+            <!-- ============================================================== -->
+            <!-- Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <div class="page-breadcrumb bg-white">
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 col-xs-12 align-self-center">
+                        <h5 class="font-medium text-uppercase mb-0"></h5>
+                    </div>
+                    <div class="col-lg-9 col-md-8 col-xs-12 align-self-center">
+                        <nav aria-label="breadcrumb" class="mt-2 float-md-right float-left">
+                            <ol class="breadcrumb mb-0 justify-content-end p-0 bg-white">
+                                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"></li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- Container fluid  -->
+            <!-- ============================================================== -->
+            <div class="page-content container-fluid">
+                @RenderBody()
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Container fluid  -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- footer -->
+            <!-- ============================================================== -->
+            <footer class="footer text-center">
+                All Rights Reserved by Universal E-Business - @DateTime.Today.Year.
+            </footer>
+            <!-- ============================================================== -->
+            <!-- End footer -->
+            <!-- ============================================================== -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+
+
+    <environment>
+        <!-- ============================================================== -->
+        <!-- All Jquery -->
+        <!-- ============================================================== -->
+        <script src="~/assets/libs/jquery/dist/jquery.min.js"></script>
+        <!-- Bootstrap tether Core JavaScript -->
+        <script src="~/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+        <script src="~/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+        <!-- apps -->
+        <script src="~/dist/js/app.min.js"></script>
+        <script src="~/dist/js/app.init.minimal.js"></script>
+        <script src="~/dist/js/app-style-switcher.js"></script>
+        <!-- slimscrollbar scrollbar JavaScript -->
+        <script src="~/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+        <script src="~/assets/extra-libs/sparkline/sparkline.js"></script>
+        <!--Wave Effects -->
+        <script src="~/dist/js/waves.js"></script>
+        <!--Menu sidebar -->
+        <script src="~/dist/js/sidebarmenu.js"></script>
+        <!--Custom JavaScript -->
+        <script src="~/dist/js/custom.min.js"></script>
+        <!-- This Page JS -->
+        <script src="~/assets/libs/chartist/dist/chartist.min.js"></script>
+        <script src="~/dist/js/pages/chartist/chartist-plugin-tooltip.js"></script>
+        <script src="~/assets/extra-libs/c3/d3.min.js"></script>
+        <script src="~/assets/extra-libs/c3/c3.min.js"></script>
+        <script src="~/assets/libs/raphael/raphael.min.js"></script>
+        <script src="~/assets/libs/morris.js/morris.min.js"></script>
+        <script src="~/dist/js/pages/dashboards/dashboard1.js"></script>
+        <script src="~/assets/libs/moment/min/moment.min.js"></script>
+        <script src="~/assets/libs/fullcalendar/dist/fullcalendar.min.js"></script>
+        <script src="~/dist/js/pages/calendar/cal-init.js"></script>
+        <script src="~/assets/libs/bootstrap-duallistbox/dist/jquery.bootstrap-duallistbox.min.js"></script>
+        <script src="~/dist/js/pages/forms/dual-listbox/dual-listbox.js"></script>
+        <!-- For editable  -->
+        <script src="~/assets/libs/moment/moment.js"></script>
+        <script src="~/assets/libs/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+        <script src="~/dist/js/pages/forms/x-editable/x-editable.init.js"></script>
+        <!-- for repeater -->
+        <script src="~/assets/libs/jquery.repeater/jquery.repeater.min.js"></script>
+        <script src="~/assets/extra-libs/jquery.repeater/repeater-init.js"></script>
+        <script src="~/assets/extra-libs/jquery.repeater/dff.js"></script>
+        <!--This page plugins -->
+        <script src="~/assets/extra-libs/DataTables/datatables.min.js"></script>
+        <script src="~/dist/js/pages/datatable/datatable-basic.init.js"></script>
+        <script>
+            $('#calendar').fullCalendar('option', 'height', 650);
+
+        </script>
+        <script src="~/assets/extra-libs/jqbootstrapvalidation/validation.js"></script>
+        <script src="~/dist/js/custom.min.js"></script>
+        <script src="~/assets/libs/select2/dist/js/select2.full.min.js"></script>
+        <script src="~/assets/libs/select2/dist/js/select2.min.js"></script>
+        <script src="~/dist/js/pages/forms/select2/select2.init.js"></script>
+        <!-- start - This is for export functionality only -->
+        <script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+        <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+        <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js"></script>
+        <!-- end - This is for export functionality only -->
+        <script>
+            ! function (window, document, $) {
+                "use strict";
+                $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+            }(window, document, jQuery);
+            $('#complex_head_col').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'csv', 'excel', 'pdf', 'print'
+                ]
+            });
+            $('.buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel').addClass('btn btn-primary m-r-10');
+        </script>
+    </environment>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

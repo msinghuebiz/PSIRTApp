@@ -1,0 +1,125 @@
+﻿@model EOXResultByProduct
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+    <div class="row">
+        <div class="col-md-12">
+            <div class="material-card card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        @if (Model.EOXRecord.Count() > 0)
+                        {
+                            <table id="complex_head_col_@Model.PaginationResponseRecord.PageIndex" class="table table-striped table-bordered display" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Product ID</th>
+                                        <th>Product Description</th>
+                                        @*<th>End-of-Life Announcement Date</th>*@
+                                        <th>End-of-Sale Date</th>
+                                        @*<th>Last Ship Date:HW</th>*@
+                                        <th>End of SW Maintenance Releases Date: HW</th>
+                                        <th>End of Routine Failure Analysis Date: HW</th>
+                                        <th>End of New Service Attachment Date: HW</th>
+                                        <th>End of Vulnerability/Security Support: OS SW</th>
+                                        <th>End of Service Contract Renewal Date: HW</th>
+                                        <th>Last Date of Support: HW</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.EOXRecord)
+                                    {
+                                        if (!(string.IsNullOrEmpty(item.EOLProductID)))
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @item.EOLProductID
+                                                </td>
+                                                <td>
+                                                    @item.ProductIDDescription
+                                                </td>
+
+
+
+
+                                                @if (item.EndOfSaleDate.value == null)
+                                                {
+                                                    <td> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td> @item.EndOfSaleDate.value.Value.ToShortDateString() </td>
+
+                                                }
+
+
+                                                @if (item.EndOfSWMaintenanceReleases.value == null)
+                                                {
+                                                    <td> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td> @item.EndOfSWMaintenanceReleases.value.Value.ToShortDateString() </td>
+
+                                                }
+                                                @if (item.EndOfRoutineFailureAnalysisDate.value == null)
+                                                {
+                                                    <td> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td> @item.EndOfRoutineFailureAnalysisDate.value.Value.ToShortDateString() </td>
+
+                                                }
+
+                                                @if (item.EndOfSvcAttachDate.value == null)
+                                                {
+                                                    <td> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td> @item.EndOfSvcAttachDate.value.Value.ToShortDateString() </td>
+
+                                                }
+
+
+                                                @if (item.EndOfSecurityVulSupportDate.value == null)
+                                                {
+                                                    <td> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td> @item.EndOfSecurityVulSupportDate.value.Value.ToShortDateString() </td>
+
+                                                }
+
+                                                @if (item.EndOfServiceContractRenewal.value == null)
+                                                {
+                                                    <td> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td> @item.EndOfServiceContractRenewal.value.Value.ToShortDateString() </td>
+
+                                                }
+
+                                                @if (item.LastDateOfSupport.value == null)
+                                                {
+                                                    <td> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td> @item.LastDateOfSupport.value.Value.ToShortDateString() </td>
+
+                                                }
+
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
