@@ -29,6 +29,116 @@ namespace PSIRTApp.Models
             _orionPassword = orionPassword;
         }
 
+        public async Task<Tuple<EOXResultByProduct, List<Dictionary<string, object>>, Dictionary<string, List<VulnStructure>>>> GetOrionVuln_Optimised(string SearchType, string SearchText)
+        {
+            var listEOL = new EOXResultByProduct();
+            listEOL.EOXRecord = new List<SearchByProductModel>();
+            var listOrion = new List<Dictionary<string, object>>();
+
+
+            string fields = "Client as C_Client,NodeName,IPAddress,HW_Model as c_HW_Model,HW_SerialNumber as c_HW_SerialNumber, Rpt_Liz_Notes as c_Rpt_Liz_Notes, Rpt_BugID_s_ as c_Rpt_BugID_s_, Rpt_BugIDs_Critical as c_Rpt_BugIDs_Critical, Rpt_BugIDs_High as c_Rpt_BugIDs_High, Rpt_BugIDs_Medium as c_Rpt_BugIDs_Medium, Rpt_IOS_Recommended as c_Rpt_IOS_Recommended, IOSVersion, n.Description ";
+
+
+            //where IOSVersion = '15.2(2)E5''
+            var searchQuery = " and Client like '" + SearchText + "%'";
+            listOrion = await GetListOrion(fields, searchQuery);
+            var HWList = new List<string>();
+            var IOSVersionList = new List<string>();
+            var HWlimitList = new Dictionary<int, List<string>>();
+            var vulrCount = new Dictionary<string, List<VulnStructure>>();
+            var count = 1;
+            var loopcount = 1;
+            foreach (var item in listOrion)
+            {
+                foreach (var itemInner in item.Keys)
+                {
+                    if (itemInner.ToLower() == "c_HW_Model".ToLower())
+                    {
+                        if (!(HWList.Contains(item[itemInner].ToString())))
+                        {
+                            HWList.Add(item[itemInner].ToString());
+                            loopcount += 1;
+                        }
+                        if (loopcount > 50)
+                        {
+
+                            HWlimitList.Add(count, HWList);
+                            count += 1;
+                            HWList = new List<string>();
+                            loopcount = 1;
+                        }
+                    }
+                    else if (itemInner.ToLower() == "IOSVersion".ToLower())
+                    {
+                        var iosfromRow = item[itemInner].ToString();
+                        IOSVersionList.Add(iosfromRow.Trim());
+
+                        //var spliVal = iosfromRow.Split(",");
+                        //if (spliVal.Count() > 0)
+                        //{
+                        //    iosfromRow = spliVal[0];
+                        //}
+                        //if (!(string.IsNullOrEmpty(iosfromRow)))
+                        //{
+                        //    if (!(IOSVersionList.Contains(iosfromRow)))
+                        //    {
+                        //        IOSVersionList.Add(iosfromRow.Trim());
+                        //    }
+                        //}
+                    }
+                }
+            }
+            if (HWlimitList.Count == 0)
+            {
+                HWlimitList.Add(1, HWList);
+
+            }
+
+            // get tye values from EOL 
+            var commandVal = new SearchByProduct();
+            // string url = SearchByProduct.URL;
+            var command = new ExecuteCommands();
+            var resultAuth = await command.GetAuthToken(_EOLclientID, _EOLclientserect);
+            foreach (var item in HWlimitList)
+            {
+                var result = await command.GetWebResponse<EOXResultByProduct>("https://api.cisco.com/supporttools/eox/rest/5/EOXByProductID/1/", string.Join(",", item.Value).ToString() + "?responseencoding=json", resultAuth);
+                if ((result != null) && (result.EOXRecord != null))
+                    listEOL.EOXRecord.AddRange(result.EOXRecord);
+            }
+
+            foreach (var currentIOSVersion in IOSVersionList)
+            {
+
+                var spliVal = currentIOSVersion.Split(",");
+                foreach (var currentIOS in spliVal)
+                {
+                    if (!(vulrCount.ContainsKey(currentIOS)))
+                    {
+                        var listVuln = new Vuln();
+                        listVuln.advisories = new List<VulnStructure>();
+                        listVuln = await GetAPIAdvisoryLists("advisories/ios?version={0}", currentIOS.ToString());
+
+                        if (listVuln.advisories.Count > 0)
+                        {
+                            // listVuln = await GetAPIAdvisoryLists("advisories/ios?version={0}", currentIOSVersion);
+                            vulrCount.Add(currentIOS, listVuln.advisories);
+                        }
+                        else
+                        {
+                            vulrCount.Add(currentIOS, new List<VulnStructure>());
+
+                        }
+                    }
+
+                }
+
+
+            }
+
+
+            return new Tuple<EOXResultByProduct, List<Dictionary<string, object>>, Dictionary<string, List<VulnStructure>>>(listEOL, listOrion, vulrCount);
+        }
+
         public async Task<Tuple<EOXResultByProduct, List<Dictionary<string, object>>, Dictionary<string, List<VulnStructure>>>> GetOrionVuln(string SearchType, string SearchText)
         {
             var listEOL = new EOXResultByProduct();
@@ -102,7 +212,7 @@ namespace PSIRTApp.Models
             foreach (var item in HWlimitList)
             {
                 var result = await command.GetWebResponse<EOXResultByProduct>("https://api.cisco.com/supporttools/eox/rest/5/EOXByProductID/1/", string.Join(",", item.Value).ToString() + "?responseencoding=json", resultAuth);
-                if (result.EOXRecord != null)
+                if ((result != null) && (result.EOXRecord != null))
                     listEOL.EOXRecord.AddRange(result.EOXRecord);
             }
 

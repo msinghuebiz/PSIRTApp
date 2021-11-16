@@ -226,6 +226,52 @@ namespace PSIRTApp.Controllers
             return View(filledModel);
         }
 
+        public async Task<ActionResult> CombinedCustomerReport()
+        {
+            var model = new EOLCombinationModel();
+            model.SearchText = string.Empty;
+            model.SearchType = string.Empty;
+            model.EOLList = new EOXResultByProduct();
+            model.OrionList = new List<Dictionary<string, object>>();
+            model.VuldistList = new Dictionary<string, List<VulnStructure>>();
+            model.OrionDistinctList = new List<string>();
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CombinedCustomerReport(EOLCombinationModel filledModel)
+        {
+            if (!(string.IsNullOrEmpty(filledModel.SearchText)))
+            {
+                if ((string.IsNullOrEmpty(filledModel.SearchType)))
+                {
+                    // With the type . get the value as per that
+                    var obj = new CombineModelClass(clientID, clientserect, eolclientID, eolclientserect, orionURL, orionUserName, orionPassword);
+                    var resultTuple = await obj.GetOrionVuln_Optimised(filledModel.SearchType, filledModel.SearchText);
+                    filledModel.EOLList = resultTuple.Item1;
+                    filledModel.OrionList = resultTuple.Item2;
+                    filledModel.VuldistList = resultTuple.Item3;
+                    filledModel.OrionDistinctList = new List<string>();
+
+                    foreach (var item in filledModel.OrionList)
+                    {
+                        var desc = item["Description"];
+                        var ios = item["IOSVersion"];
+                        var uniquedesc = string.Format("{0}~{1}", desc, ios);
+                        if (!(filledModel.OrionDistinctList.Contains(uniquedesc)))
+                        {
+                            filledModel.OrionDistinctList.Add(uniquedesc);
+                        }
+
+
+
+
+                    }
+                }
+            }
+
+            return View(filledModel);
+        }
 
         public async Task<IActionResult> OrionToVuln()
         {
