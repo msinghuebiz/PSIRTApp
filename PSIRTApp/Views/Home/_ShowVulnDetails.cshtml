@@ -1,0 +1,38 @@
+﻿@using PSIRTApp.Models;
+@model string
+@{
+    ViewData["Title"] = "_ShowVulnDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var objXMl = new ExtractXML();
+     var result = objXMl.GetXMLValue(Model);
+
+}
+
+
+<div class="table-responsive" style="overflow-y:scroll;overflow-x:scroll">
+
+    <table id="xmlTable" class="table table-bordered display" style="width:100%">
+        <thead>
+            <tr>
+               
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in result.Item2)
+            {
+                <tr>
+                    <td>
+                        <textarea rows="4" cols="50">@item.Value</textarea>
+                    </td>
+                </tr>
+            }
+            </tbody>
+    </table>
+
+</div>
+
+
+@*<label for="recipient-name" class="control-label">Recipient:</label>
+    <input type="text" class="form-control" id="recipient-name1" value=" @itemVuln.cvrfUrl">*@

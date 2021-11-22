@@ -1,0 +1,50 @@
+﻿@model string
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+
+   
+*@
+@{ 
+    var objXMl = new ExtractXML();
+    var result = objXMl.GetXMLValue(Model);
+}
+
+<div class="table-responsive" style="overflow-y:scroll;overflow-x:scroll">
+
+    <table id="xmlTable" class="table table-bordered display" style="width:100%">
+        <thead>
+            <tr>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in result.Item2)
+            {
+                <tr>
+                    <td>
+                        <table>
+                            @foreach (System.Dynamic.ExpandoObject itemInner in item.Value)
+                            {
+                                var data = (IDictionary<string, object>)itemInner;
+                                foreach (var itemdic in data)
+                                {
+                            <tr>
+                                <td>
+                                    <label>@itemdic.Key</label>
+                                </td>
+                                <td>
+                                    <textarea readonly  rows="4" cols="100">@itemdic.Value</textarea>
+                                </td>
+                            </tr>
+
+                                }
+                            }
+                        </table>
+                            @*<textarea rows="4" cols="50">@item.Value</textarea>*@
+</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

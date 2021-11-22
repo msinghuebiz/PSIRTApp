@@ -42,6 +42,11 @@ namespace PSIRTApp.Controllers
             var ss = string.Empty;
         }
 
+        public async Task<ActionResult> _PartialViewModel(string xmlLinkValue)
+        {
+            return PartialView("_PartialVulnDetails", xmlLinkValue);
+        }
+
         public async Task<ActionResult> CiscoPSIRT()
         {
             {
