@@ -272,6 +272,8 @@ namespace PSIRTApp.Controllers
 
 
                     }
+
+                    filledModel.OrionDistinctList.Sort();
                 }
             }
 

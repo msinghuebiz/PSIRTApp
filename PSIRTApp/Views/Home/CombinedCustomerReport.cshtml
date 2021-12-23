@@ -51,7 +51,16 @@
 
 
                 <div class="col-lg-12 col-xl-12">
-                    <div class="nav flex-column nav-pills" style="height:200px;width:100%;overflow-x:scroll;" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <div style="height:200px;width:100%;overflow-x:scroll;">
+                        @if (Model.OrionList.Count() > 0)
+                        {
+                            <table>
+
+                            </table>
+                        }
+                            
+                        </div>
+                    <div class="nav flex-column nav-pills"  id="v-pills-tab" role="tablist" aria-orientation="vertical">
                         @if (Model.OrionList.Count() > 0)
                         {
                             var count = 1;
