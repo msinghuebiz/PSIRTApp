@@ -1,0 +1,169 @@
+﻿@model EOLCombinationModel
+@{
+    ViewData["Title"] = "CiscoMaster";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="material-card card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <form action="~/Home/CiscoEOLSW" method="post">
+                        <table>
+                            <tr>
+                                <td class="col-md-8"><input asp-for="@Model.SearchText" type="text" class="form-control" placeholder="Enter Client Name."></td>
+                                <td>
+                                    <input type="date" class="form-control" asp-for="@Model.StartDate" value="@DateTime.Now.AddDays(-7).Date">
+                                </td>
+                                <td>
+                                    <input type="date" class="form-control" asp-for="@Model.EndDate" value="@DateTime.Now.Date">
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="col-md-4"><button type="submit" class="btn btn-primary">Search</button></td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" id="orionvalue">
+
+    <div class="card">
+        <div class="card-body">
+            <div class="col-md-12">
+                <div class="material-card card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            @if (Model.OrionList.Count() > 0)
+                            {
+                                var count = 1;
+                                <table id="complex_head_col" class="table table-striped table-bordered display" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Sr No.</th>
+                                            <th>Device Name</th>
+                                            <th>Product Type</th>
+                                            <th>Ip adfdress</th>
+                                            <th>Model Name</th>
+                                            <th>OS type</th>
+                                            <th>OS Version</th>
+                                            <th>End of Support </th>
+                                            <th>End of Sale</th>
+                                            <th>End of Life</th>
+                                            <th>End of Engineering</th>
+                                            <th>End of Contract Renewal </th>
+
+                                            @*@foreach (var key in Model.OrionList[0].Keys)
+                                                {
+                                                    <th> @key </th>
+                                                }*@
+                                            @*<th>number of 'vulnerable'</th>*@
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach (var item in Model.OrionList)
+                                        {
+                                            var vulCount = string.Empty;
+                                            var IOSvers = @item["IOSVersion"].ToString();
+                                            var arr = IOSvers.Split(",");
+                                            if (arr.Length > 1)
+                                            {
+                                                IOSvers = arr[0];
+                                            }
+                                            var productID = item["c_HW_Model"].ToString();
+                                            var currentEOD = Model.EOLList.EOXRecord.Where(r => r.EOLProductID.ToLower() == productID.ToLower()).FirstOrDefault();
+                                            <tr>
+                                                <td>@count</td>
+                                                <td>@item["NodeName"].ToString()</td>
+                                                <td>@item["Description"].ToString()</td>
+                                                <td>@item["IPAddress"].ToString()</td>
+                                                <td>@item["c_HW_Model"].ToString()</td>
+                                                <td></td>
+                                                <td>@IOSvers.ToString()</td>
+
+                                                @if (currentEOD == null)
+                                                {
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@currentEOD.LastDateOfSupport.value.Value.ToLongDateString()</td>
+                                                    <td>@currentEOD.EndOfSaleDate.value.Value.ToLongDateString()</td>
+                                                    <td><a href="@currentEOD.LinkToProductBulletinURL">@currentEOD.LinkToProductBulletinURL</a></td>
+                                                    <td>@currentEOD.LastDateOfSupport.value.Value.ToLongDateString()</td>
+                                                    <td>@currentEOD.EndOfServiceContractRenewal.value.Value.ToLongDateString()</td>
+                                                }
+
+
+
+
+                                                @*@foreach (var itemVal in item)
+                                                    {
+
+
+                                                        if (itemVal.Key.ToLower() == "IOSVersion".ToLower())
+                                                        {
+
+                                                            var iosfromRow = itemVal.Value.ToString();
+                                                            var spliVal = iosfromRow.Split(",");
+                                                            if (spliVal.Count() > 0)
+                                                            {
+                                                                iosfromRow = spliVal[0];
+                                                            }
+                                                            if (!(string.IsNullOrEmpty(iosfromRow)))
+                                                            {
+                                                                if (Model.VulCountList.ContainsKey(iosfromRow))
+                                                                {
+                                                                    vulCount = Model.VulCountList[iosfromRow].ToString();
+                                                                }
+                                                                else
+                                                                {
+                                                                    vulCount = "0";
+
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                vulCount = "0";
+                                                            }
+
+                                                            <td>@iosfromRow</td>
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>@itemVal.Value</td>
+
+                                                        }
+                                                    }
+
+                                                    <td>@vulCount</td>*@
+                                            </tr>
+
+
+
+
+                                            count += 1;
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+

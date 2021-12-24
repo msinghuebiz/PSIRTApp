@@ -81,7 +81,41 @@ namespace PSIRTApp.Controllers
 
             return View(filledModel);
         }
+        
+        public async Task<ActionResult> CiscoMaster()
+        {
+            {
+                var model = new EOLCombinationModel();
+                model.OrionList = new List<Dictionary<string, object>>();
+                model.EOLList = new EOXResultByProduct();
+                model.OrionDistinctList = new List<string>();
+                model.VulCountList = new Dictionary<string, int>();
+                return View(model);
 
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CiscoMaster(EOLCombinationModel filledModel)
+        {
+            if (!(string.IsNullOrEmpty(filledModel.SearchText)))
+            {
+                if ((string.IsNullOrEmpty(filledModel.SearchType)))
+                {
+                    // With the type . get the value as per that
+                    var obj = new CombineModelClass(clientID, clientserect, eolclientID, eolclientserect, orionURL, orionUserName, orionPassword);
+                    var resultTuple = await obj.GetCiscoEOLHW(filledModel.SearchType, filledModel.SearchText);
+                    filledModel.EOLList = resultTuple.Item1;
+                    filledModel.OrionList = resultTuple.Item2;
+                    filledModel.VulCountList = resultTuple.Item3;
+                    filledModel.OrionDistinctList = new List<string>();
+
+
+                }
+            }
+
+            return View(filledModel);
+        }
         public async Task<ActionResult> CiscoEOLSW()
         {
             {
