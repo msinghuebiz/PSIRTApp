@@ -45,23 +45,27 @@
                                 <table id="complex_head_col" class="table table-striped table-bordered display" style="width:100%">
                                     <thead>
                                         <tr>
-                                            <th>Sr No.</th>
+                                            <th>Client Name</th>
+                                            <th>Client Site</th>
                                             <th>Device Name</th>
-                                            <th>Product Type</th>
-                                            <th>Ip adfdress</th>
                                             <th>Model Name</th>
-                                            <th>OS type</th>
                                             <th>OS Version</th>
-                                            <th>End of Support </th>
-                                            <th>End of Sale</th>
-                                            <th>End of Life</th>
-                                            <th>End of Engineering</th>
-                                            <th>End of Contract Renewal </th>
+                                            <th>SW: End of Maintenance Release Date</th>
+                                            <th>SW: End of Vulnerability/Security Support of OS</th>
+                                            <th>HW: End of Sale Date</th>
+                                            <th>HW: End of Routine Failure Analysis Date</th>
+                                            <th>HW: End of New Service Attachment Date</th>
+                                            <th>HW: End of Service Contract Renewal Date</th>
+                                            <th>HW: Last Date of Support</th>
+                                            <th>IP Address</th>
+                                            <th>Product Type</th>
+                                            <th>OS type</th>
+
 
                                             @*@foreach (var key in Model.OrionList[0].Keys)
-                                            {
-                                                <th> @key </th>
-                                            }*@
+        {
+            <th> @key </th>
+        }*@
                                             @*<th>number of 'vulnerable'</th>*@
                                         </tr>
                                     </thead>
@@ -79,30 +83,96 @@
                                             var productID = item["c_HW_Model"].ToString();
                                             var currentEOD = Model.EOLList.EOXRecord.Where(r => r.EOLProductID.ToLower() == productID.ToLower()).FirstOrDefault();
                                         <tr>
-                                            <td>@count</td>
-                                            <td>@item["NodeName"].ToString()</td>
-                                            <td>@item["Description"].ToString()</td>
-                                            <td>@item["IPAddress"].ToString()</td>
-                                            <td>@item["c_HW_Model"].ToString()</td>
-                                            <td></td>
-                                            <td>@IOSvers.ToString()</td>
 
+                                            <td>@item["Client"].ToString()</td>
+                                            <td>@item["Client_Site"].ToString()</td>
+                                            <td>@item["NodeName"].ToString()</td>
+                                            <td>@item["c_HW_Model"].ToString()</td>
+                                            <td>@IOSvers.ToString()</td>
                                             @if (currentEOD == null)
                                             {
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
                                             }
                                             else
                                             {
-                                                <td>@currentEOD.LastDateOfSupport.value.Value.ToLongDateString()</td>
-                                                <td>@currentEOD.EndOfSaleDate.value.Value.ToLongDateString()</td>
-                                                <td><a href="@currentEOD.LinkToProductBulletinURL">@currentEOD.LinkToProductBulletinURL</a></td>
-                                                <td>@currentEOD.LastDateOfSupport.value.Value.ToLongDateString()</td>
-                                                <td>@currentEOD.EndOfServiceContractRenewal.value.Value.ToLongDateString()</td>
+                                            @if (currentEOD.EndOfSWMaintenanceReleases.value.HasValue)
+                                                {
+                                            <td>@currentEOD.EndOfSWMaintenanceReleases.value.Value.ToString("yyyy/MM/dd")</td>
+
+                                                }
+                                                else
+                                                {
+                                            <td></td>
+                                                }
+                                            @if (currentEOD.EndOfSecurityVulSupportDate.value.HasValue)
+                                                {
+                                            <td>@currentEOD.EndOfSecurityVulSupportDate.value.Value.ToString("yyyy/MM/dd")</td>
+
+                                                }
+                                                else
+                                                {
+                                            <td></td>
+                                                }
+                                            @if (currentEOD.EndOfSaleDate.value.HasValue)
+                                                {
+                                            <td>@currentEOD.EndOfSaleDate.value.Value.ToString("yyyy/MM/dd")</td>
+
+                                                }
+                                                else
+                                                {
+                                            <td></td>
+                                                }
+                                            @if (currentEOD.EndOfRoutineFailureAnalysisDate.value.HasValue)
+                                                {
+                                            <td>@currentEOD.EndOfRoutineFailureAnalysisDate.value.Value.ToString("yyyy/MM/dd")</td>
+
+                                                }
+                                                else
+                                                {
+                                            <td></td>
+                                                }
+                                            @if (currentEOD.EndOfSvcAttachDate.value.HasValue)
+                                                {
+                                            <td>@currentEOD.EndOfSvcAttachDate.value.Value.ToString("yyyy/MM/dd")</td>
+
+                                                }
+                                                else
+                                                {
+                                            <td></td>
+                                                }
+
+                                            @if (currentEOD.EndOfServiceContractRenewal.value.HasValue)
+                                                {
+                                            <td>@currentEOD.EndOfServiceContractRenewal.value.Value.ToString("yyyy/MM/dd")</td>
+
+                                                }
+                                                else
+                                                {
+                                            <td></td>
+                                                }
+                                            @if (currentEOD.LastDateOfSupport.value.HasValue)
+                                                {
+                                            <td>@currentEOD.LastDateOfSupport.value.Value.ToString("yyyy/MM/dd")</td>
+
+                                                }
+                                                else
+                                                {
+                                            <td></td>
+                                                }
+
                                             }
+
+                                            <td>@item["IPAddress"].ToString()</td>
+                                            <td>@item["Description"].ToString()</td>
+                                            <td>@item["NodeDescription"].ToString()</td>
+
+
 
 
 

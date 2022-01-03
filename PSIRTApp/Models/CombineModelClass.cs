@@ -370,7 +370,152 @@ namespace PSIRTApp.Models
             return new Tuple<EOXResultByProduct, List<Dictionary<string, object>>, Dictionary<string, int>>(listEOL, listOrion, vulrCount);
         }
 
-        
+        public async Task<Tuple<EOXResultByProduct, List<Dictionary<string, object>>, Dictionary<string, int>, Dictionary<string,List<Bug>>, Dictionary<string, List<VulnStructure>>, List<string>>> GetCiscoMaster(string SearchType, string SearchText)
+        {
+            var listEOL = new EOXResultByProduct();
+            listEOL.EOXRecord = new List<SearchByProductModel>();
+            var listOrion = new List<Dictionary<string, object>>();
+            var listBug = new Dictionary<string, List<Bug>>();
+            var listAdvisoryList = new Dictionary<string, List<VulnStructure>>();
+            var distImpact = new List<string>();
+
+
+            string fields = "Rpt_SW, Client, Client_Site, Client as C_Client,NodeName,IPAddress,HW_Model as c_HW_Model,HW_SerialNumber as c_HW_SerialNumber, Rpt_Liz_Notes , Rpt_BugID_s_ as c_Rpt_BugID_s_, Rpt_BugIDs_Critical as c_Rpt_BugIDs_Critical, Rpt_BugIDs_High as c_Rpt_BugIDs_High, Rpt_BugIDs_Medium as c_Rpt_BugIDs_Medium, Rpt_IOS_Recommended as c_Rpt_IOS_Recommended, IOSVersion, n.Description, NodeDescription, StatusDescription ";
+
+
+            //where IOSVersion = '15.2(2)E5''
+            var searchQuery = string.Empty;
+            if (!(string.IsNullOrEmpty(SearchText)))
+            {
+                searchQuery = " and Client like '" + SearchText + "%'";
+            }
+            listOrion = await GetListOrion(fields, searchQuery);
+            var HWList = new List<string>();
+            var IOSVersionList = new List<string>();
+            var HWlimitList = new Dictionary<int, List<string>>();
+            var vulrCount = new Dictionary<string, int>();
+            var count = 1;
+            var loopcount = 1;
+            foreach (var item in listOrion)
+            {
+                foreach (var itemInner in item.Keys)
+                {
+                    if (itemInner.ToLower() == "c_HW_Model".ToLower())
+                    {
+                        if (!(HWList.Contains(item[itemInner].ToString())))
+                        {
+                            HWList.Add(item[itemInner].ToString());
+                            loopcount += 1;
+                        }
+                        if (loopcount > 50)
+                        {
+
+                            HWlimitList.Add(count, HWList);
+                            count += 1;
+                            HWList = new List<string>();
+                            loopcount = 1;
+                        }
+                    }
+                    else if (itemInner.ToLower() == "IOSVersion".ToLower())
+                    {
+                        var iosfromRow = item[itemInner].ToString();
+                        var spliVal = iosfromRow.Split(",");
+                        if (spliVal.Count() > 0)
+                        {
+                            iosfromRow = spliVal[0];
+                        }
+                        if (!(string.IsNullOrEmpty(iosfromRow)))
+                        {
+                            if (!(IOSVersionList.Contains(iosfromRow)))
+                            {
+                                IOSVersionList.Add(iosfromRow.Trim());
+                            }
+                        }
+                    }
+                }
+            }
+            if (HWlimitList.Count == 0)
+            {
+                HWlimitList.Add(1, HWList);
+
+            }
+
+            // get tye values from EOL 
+            var commandVal = new SearchByProduct();
+            // string url = SearchByProduct.URL;
+            var command = new ExecuteCommands();
+            var resultAuth = await command.GetAuthToken(_EOLclientID, _EOLclientserect);
+           // foreach (var item in HWlimitList)
+           // {
+           //     var result = await command.GetWebResponse<EOXResultByProduct>("https://api.cisco.com/supporttools/eox/rest/5/EOXByProductID/1/", string.Join(",", item.Value).ToString() + "?responseencoding=json", resultAuth);
+           //     if (result.EOXRecord != null)
+           //         listEOL.EOXRecord.AddRange(result.EOXRecord);
+           // }
+
+           //var resultAuthBug = await command.GetAuthToken(_clientID, _clientserect);
+
+            //foreach (var item in HWlimitList)
+            //{
+
+            //    foreach (var itemInner in item.Value)
+            //    {
+            //        try
+            //        {
+            //            var resultweb = await command.GetWebResponse<Bugs>("https://api.cisco.com/bug/v2.0/bugs/products/product_id/" + itemInner, "?page_index=1&modified_date=5", resultAuth);
+            //            if (resultweb != null)
+            //            {
+            //                var bugs = new List<Bug>();
+            //                bugs.AddRange(resultweb.bugs.ToList());
+                            
+            //                listBug.Add( itemInner, bugs);
+
+            //            }
+            //        }
+            //        catch ( Exception ex)
+            //        {
+
+            //        }
+            //    }
+            //}
+
+            foreach (var currentIOSVersion in IOSVersionList)
+            {
+                var listVuln = new Vuln();
+                listVuln.advisories = new List<VulnStructure>();
+                listVuln = await GetAPIAdvisoryLists("advisories/ios?version={0}", currentIOSVersion.ToString());
+                if (listVuln.advisories.Count() == 0 )
+                {
+                    listVuln = await GetAPIAdvisoryLists("advisories/iosxe?version={0}", currentIOSVersion.ToString());
+                }
+                if (listVuln.advisories.Count() == 0)
+                {
+                    listVuln = await GetAPIAdvisoryLists("advisories/nxos?version={0}", currentIOSVersion.ToString());
+                }
+                if (listVuln.advisories.Count() == 0)
+                {
+                    listVuln = await GetAPIAdvisoryLists("advisories/aci?version={0}", currentIOSVersion.ToString());
+                }
+
+
+                // listVuln = await GetAPIAdvisoryLists("advisories/ios?version={0}", currentIOSVersion);
+                vulrCount.Add(currentIOSVersion, listVuln.advisories.Count());
+                listAdvisoryList.Add(currentIOSVersion, listVuln.advisories);
+                var disntImpact = listVuln.advisories.Select(r => r.sir).Distinct().ToList();
+                foreach (var itemImpact in disntImpact)
+                {
+                    if (!(distImpact.Contains(itemImpact)))
+                    {
+                        distImpact.Add(itemImpact);
+                    }
+                }
+            }
+
+
+
+
+            return new Tuple<EOXResultByProduct, List<Dictionary<string, object>>, Dictionary<string, int>, Dictionary<string,List<Bug>>, Dictionary<string, List<VulnStructure>>, List<string>>(listEOL, listOrion, vulrCount, listBug, listAdvisoryList, distImpact);
+        }
+
         public async Task<Tuple<EOXResultByProduct, List<Dictionary<string, object>>, Dictionary<string, int>>> GetCiscoEOLHW(string SearchType, string SearchText)
         {
             var listEOL = new EOXResultByProduct();
@@ -378,11 +523,15 @@ namespace PSIRTApp.Models
             var listOrion = new List<Dictionary<string, object>>();
 
 
-            string fields = "Client as C_Client,NodeName,IPAddress,HW_Model as c_HW_Model,HW_SerialNumber as c_HW_SerialNumber, Rpt_Liz_Notes as c_Rpt_Liz_Notes, Rpt_BugID_s_ as c_Rpt_BugID_s_, Rpt_BugIDs_Critical as c_Rpt_BugIDs_Critical, Rpt_BugIDs_High as c_Rpt_BugIDs_High, Rpt_BugIDs_Medium as c_Rpt_BugIDs_Medium, Rpt_IOS_Recommended as c_Rpt_IOS_Recommended, IOSVersion, n.Description ";
+            string fields = "Client, Client_Site, Client as C_Client,NodeName,IPAddress,HW_Model as c_HW_Model,HW_SerialNumber as c_HW_SerialNumber, Rpt_Liz_Notes as c_Rpt_Liz_Notes, Rpt_BugID_s_ as c_Rpt_BugID_s_, Rpt_BugIDs_Critical as c_Rpt_BugIDs_Critical, Rpt_BugIDs_High as c_Rpt_BugIDs_High, Rpt_BugIDs_Medium as c_Rpt_BugIDs_Medium, Rpt_IOS_Recommended as c_Rpt_IOS_Recommended, IOSVersion, n.Description, NodeDescription, StatusDescription ";
 
 
             //where IOSVersion = '15.2(2)E5''
-            var searchQuery = " and Client like '" + SearchText + "%'";
+            var searchQuery = string.Empty;
+            if (!(string.IsNullOrEmpty(SearchText)))
+            {
+                searchQuery = " and Client like '" + SearchText + "%'";
+            }
             listOrion = await GetListOrion(fields, searchQuery);
             var HWList = new List<string>();
             var IOSVersionList = new List<string>();
@@ -452,7 +601,7 @@ namespace PSIRTApp.Models
                 listVuln.advisories = new List<VulnStructure>();
                 //listVuln = await GetAPIAdvisoryLists("advisories/ios?version={0}", currentIOSVersion.ToString());
                 // listVuln = await GetAPIAdvisoryLists("advisories/ios?version={0}", currentIOSVersion);
-                vulrCount.Add(currentIOSVersion, listVuln.advisories.Count());
+                //vulrCount.Add(currentIOSVersion, listVuln.advisories.Count());
             }
 
 
@@ -656,6 +805,28 @@ namespace PSIRTApp.Models
             var result = arrayObject.ToObject<IList<Dictionary<string, object>>>();
 
             return result.ToList();
+        }
+
+        private async Task<List<Bug>> GetAPIBugsList(string urlText, List<string> HWlimitList)
+        {
+            var result = new List<Bug>();
+            try
+            {
+                var command = new ExecuteCommands();
+                var resultAuth = await command.GetAuthToken(_EOLclientID, _EOLclientserect);
+                foreach (var item in HWlimitList)
+                {
+                    var resultweb = await command.GetWebResponse<List<Bug>>("https://api.cisco.com/bug/v2.0/bugs/products/product_id/" + item , "??page_index=1&modified_date=5", resultAuth);
+                    if (resultweb != null)
+                        result.AddRange(resultweb);
+                }
+            }
+            catch ( Exception ex)
+            {
+                throw ex;
+            }
+
+            return result;
         }
 
         private async Task<Vuln> GetAPIAdvisoryLists(string urlText, string searchText)

@@ -33,7 +33,9 @@ namespace PSIRTApp.Models
 
         public List<Dictionary<string, object>> OrionList { get; set; }
         public Dictionary<string, int> VulCountList { get; set; }
+        public Dictionary<string,List<Bug>> BugList { get; set; }
         public Dictionary<string, List<VulnStructure>> VuldistList { get; set; }
+        public List<string> ImpactDistinctList { get; set; }
         public List<string> OrionDistinctList { get; set; }
     }
 }

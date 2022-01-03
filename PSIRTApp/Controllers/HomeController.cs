@@ -98,21 +98,22 @@ namespace PSIRTApp.Controllers
         [HttpPost]
         public async Task<IActionResult> CiscoMaster(EOLCombinationModel filledModel)
         {
-            if (!(string.IsNullOrEmpty(filledModel.SearchText)))
-            {
+            //if (!(string.IsNullOrEmpty(filledModel.SearchText)))
+            //{
                 if ((string.IsNullOrEmpty(filledModel.SearchType)))
                 {
                     // With the type . get the value as per that
                     var obj = new CombineModelClass(clientID, clientserect, eolclientID, eolclientserect, orionURL, orionUserName, orionPassword);
-                    var resultTuple = await obj.GetCiscoEOLHW(filledModel.SearchType, filledModel.SearchText);
+                    var resultTuple = await obj.GetCiscoMaster(filledModel.SearchType, filledModel.SearchText);
                     filledModel.EOLList = resultTuple.Item1;
                     filledModel.OrionList = resultTuple.Item2;
                     filledModel.VulCountList = resultTuple.Item3;
+                    filledModel.BugList = resultTuple.Item4;
+                    filledModel.VuldistList = resultTuple.Item5;
+                    filledModel.ImpactDistinctList = resultTuple.Item6;
                     filledModel.OrionDistinctList = new List<string>();
-
-
                 }
-            }
+           // }
 
             return View(filledModel);
         }
@@ -132,8 +133,8 @@ namespace PSIRTApp.Controllers
         [HttpPost]
         public async Task<IActionResult> CiscoEOLSW(EOLCombinationModel filledModel)
         {
-            if (!(string.IsNullOrEmpty(filledModel.SearchText)))
-            {
+            //if (!(string.IsNullOrEmpty(filledModel.SearchText)))
+            //{
                 if ((string.IsNullOrEmpty(filledModel.SearchType)))
                 {
                     // With the type . get the value as per that
@@ -146,7 +147,7 @@ namespace PSIRTApp.Controllers
 
 
                 }
-            }
+            //}
 
             return View(filledModel);
         }
