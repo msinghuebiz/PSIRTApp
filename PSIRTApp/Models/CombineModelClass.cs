@@ -420,9 +420,14 @@ namespace PSIRTApp.Models
                     {
                         var iosfromRow = item[itemInner].ToString();
                         var spliVal = iosfromRow.Split(",");
+                        if (spliVal.Count() == 1)
+                        {
+                            spliVal = iosfromRow.Split(" ");
+                        }
                         if (spliVal.Count() > 0)
                         {
                             iosfromRow = spliVal[0];
+                            iosfromRow = iosfromRow.Trim().Replace(" ", "");
                         }
                         if (!(string.IsNullOrEmpty(iosfromRow)))
                         {

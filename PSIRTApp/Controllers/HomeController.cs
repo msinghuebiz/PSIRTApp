@@ -543,24 +543,31 @@ namespace PSIRTApp.Controllers
         private async Task<Vuln> GetAPIAdvisoryLists(string urlText, string searchText )
         {
             var listResult = new Vuln();
-            listResult.advisories = new List<VulnStructure>();
-            var splittedIDs = searchText.Split(",");
-            foreach (var item in splittedIDs)
+
+            try
             {
-                var updatedURLText = string.Format(urlText, item);
-                var command = new ExecuteCommands();
-                var resultAuth = await command.GetAuthToken(clientID, clientserect);
-                var resultList = await command.GetWebResponse<Vuln>("https://api.cisco.com/security/", updatedURLText, resultAuth);
-                if (resultList.advisories != null)
+                listResult.advisories = new List<VulnStructure>();
+                var splittedIDs = searchText.Split(",");
+                foreach (var item in splittedIDs)
                 {
-                    foreach (var itemList in resultList.advisories)
+                    var updatedURLText = string.Format(urlText, item);
+                    var command = new ExecuteCommands();
+                    var resultAuth = command.GetAuthToken(clientID, clientserect).Result;
+                    var resultList = command.GetWebResponse<Vuln>("https://api.cisco.com/security/", updatedURLText, resultAuth).Result;
+                    if (resultList.advisories != null)
                     {
-                        listResult.advisories.Add(itemList);
+                        foreach (var itemList in resultList.advisories)
+                        {
+                            listResult.advisories.Add(itemList);
+                        }
                     }
+
                 }
-
             }
-
+            catch (Exception ex)
+            {
+                throw ex;
+            }
             return listResult;
         }
         

@@ -96,9 +96,15 @@
                                             var vulCount = string.Empty;
                                             var IOSvers = @item["IOSVersion"].ToString();
                                             var arr = IOSvers.Split(",");
+                                             if (arr.Count() == 1)
+                                            {
+                                                arr = IOSvers.Split(" ");
+                                            }
                                             if (arr.Length > 1)
                                             {
                                                 IOSvers = arr[0];
+                                                IOSvers = IOSvers.Trim().Replace(" ", "");
+
                                             }
                                             var productID = item["c_HW_Model"].ToString();
 
