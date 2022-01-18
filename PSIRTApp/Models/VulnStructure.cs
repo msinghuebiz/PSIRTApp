@@ -11,6 +11,7 @@ namespace PSIRTApp.Models
         public string advisoryID { get; set; }
 
         public Vuln List { get; set; }
+        public List<string> DistinctList { get; set; }
     }
 
     public class Vuln

@@ -474,6 +474,36 @@ namespace PSIRTApp.Controllers
             }
             return View(filledModel);
         }
+        public async Task<IActionResult> IndexNXOSACICount()
+        {
+            var model = new IndexModel();
+            model.advisoryID = string.Empty;
+            model.List = new Vuln();
+            model.List.advisories = new List<VulnStructure>();
+
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> IndexNXOSACICount(IndexModel filledModel)
+        {
+            if (!(string.IsNullOrEmpty(filledModel.advisoryID)))
+            {
+                filledModel.List = await GetAPIAdvisoryLists("advisories/aci?version={0}", filledModel.advisoryID);
+                filledModel.DistinctList = new List<string>();
+                var disntImpact = filledModel.List.advisories.Select(r => r.sir).Distinct().ToList();
+                foreach (var itemImpact in disntImpact)
+                {
+                    if (!(filledModel.DistinctList.Contains(itemImpact)))
+                    {
+                        filledModel.DistinctList.Add(itemImpact);
+                    }
+                }
+                //var command = new ExecuteCommands();
+                //var resultAuth = await command.GetAuthToken(clientID, clientserect);
+                //filledModel.List = await command.GetWebResponse<Vuln>("", "advisories/aci?version=" + filledModel.advisoryID, resultAuth);
+            }
+            return View(filledModel);
+        }
         public async Task<IActionResult> IndexNXOS()
         {
             var model = new IndexModel();
@@ -490,6 +520,37 @@ namespace PSIRTApp.Controllers
             {
                 filledModel.List = await GetAPIAdvisoryLists("advisories/nxos?version={0}", filledModel.advisoryID);
 
+                //var command = new ExecuteCommands();
+                //var resultAuth = await command.GetAuthToken(clientID, clientserect);
+                //filledModel.List = await command.GetWebResponse<Vuln>("", "advisories/nxos?version=" + filledModel.advisoryID, resultAuth);
+            }
+            return View(filledModel);
+        }
+        public async Task<IActionResult> IndexNXOSCount()
+        {
+            var model = new IndexModel();
+            model.advisoryID = string.Empty;
+            model.List = new Vuln();
+            model.List.advisories = new List<VulnStructure>();
+
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> IndexNXOSCount(IndexModel filledModel)
+        {
+            if (!(string.IsNullOrEmpty(filledModel.advisoryID)))
+            {
+                filledModel.List = await GetAPIAdvisoryLists("advisories/nxos?version={0}", filledModel.advisoryID);
+
+                filledModel.DistinctList = new List<string>();
+                var disntImpact = filledModel.List.advisories.Select(r => r.sir).Distinct().ToList();
+                foreach (var itemImpact in disntImpact)
+                {
+                    if (!(filledModel.DistinctList.Contains(itemImpact)))
+                    {
+                        filledModel.DistinctList.Add(itemImpact);
+                    }
+                }
                 //var command = new ExecuteCommands();
                 //var resultAuth = await command.GetAuthToken(clientID, clientserect);
                 //filledModel.List = await command.GetWebResponse<Vuln>("", "advisories/nxos?version=" + filledModel.advisoryID, resultAuth);
@@ -519,6 +580,35 @@ namespace PSIRTApp.Controllers
             }
             return View(filledModel);
         }
+        public async Task<IActionResult> IndexIOSXECount()
+        {
+            var model = new IndexModel();
+            model.advisoryID = string.Empty;
+            model.List = new Vuln();
+            model.List.advisories = new List<VulnStructure>();
+
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> IndexIOSXECount(IndexModel filledModel)
+        {
+            if (!(string.IsNullOrEmpty(filledModel.advisoryID)))
+            {
+                filledModel.List = await GetAPIAdvisoryLists("advisories/iosxe?version={0}", filledModel.advisoryID);
+
+                filledModel.DistinctList = new List<string>();
+                var disntImpact = filledModel.List.advisories.Select(r => r.sir).Distinct().ToList();
+                foreach (var itemImpact in disntImpact)
+                {
+                    if (!(filledModel.DistinctList.Contains(itemImpact)))
+                    {
+                        filledModel.DistinctList.Add(itemImpact);
+                    }
+                }
+                //filledModel.List = await command.GetWebResponse<Vuln>("", "advisories/iosxe?version=" + filledModel.advisoryID, resultAuth);
+            }
+            return View(filledModel);
+        }
         public async Task<IActionResult> IndexIOS()
         {
             var model = new IndexModel();
@@ -535,6 +625,37 @@ namespace PSIRTApp.Controllers
             {
                 
                 filledModel.List = await GetAPIAdvisoryLists("advisories/ios?version={0}", filledModel.advisoryID);
+
+            }
+            return View(filledModel);
+        }
+
+        public async Task<IActionResult> IndexIOSCount()
+        {
+            var model = new IndexModel();
+            model.advisoryID = string.Empty;
+            model.List = new Vuln();
+            model.List.advisories = new List<VulnStructure>();
+
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> IndexIOSCount(IndexModel filledModel)
+        {
+            if (!(string.IsNullOrEmpty(filledModel.advisoryID)))
+            {
+                
+                filledModel.List = await GetAPIAdvisoryLists("advisories/ios?version={0}", filledModel.advisoryID);
+
+                filledModel.DistinctList = new List<string>();
+                var disntImpact = filledModel.List.advisories.Select(r => r.sir).Distinct().ToList();
+                foreach (var itemImpact in disntImpact)
+                {
+                    if (!(filledModel.DistinctList.Contains(itemImpact)))
+                    {
+                        filledModel.DistinctList.Add(itemImpact);
+                    }
+                }
 
             }
             return View(filledModel);

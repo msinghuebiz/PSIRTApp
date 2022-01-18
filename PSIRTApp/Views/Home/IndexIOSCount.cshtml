@@ -1,0 +1,81 @@
+﻿@model IndexModel
+@{
+    ViewData["Title"] = "IndexIOSCount";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="material-card card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <form action="~/Home/IndexIOSCount" method="post">
+                        <table>
+                            <tr>
+                                <td class="col-md-8"><input asp-for="@Model.advisoryID" type="text" class="form-control" placeholder="Enter IOS Version."></td>
+                                <td class="col-md-4"><button type="submit" class="btn btn-primary">Search</button></td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (!(Model.List == null))
+{
+    if (!(Model.List.advisories == null))
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="material-card card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            @if (Model.List.advisories.Count() > 0)
+                            {
+                                <table id="complex_head_col" class="table table-striped table-bordered display" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th> advisoryId </th>
+                                            @foreach ( var item in Model.DistinctList)
+                                            {
+                                                  <th>@item</th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>@Model.advisoryID</td>
+                                            @foreach(var item in Model.DistinctList)
+                                            {
+
+
+                                                  var advisories = Model.List.advisories.Where(r => r.sir == item).ToList();
+                                                    var uniqueBugCount = new List<string>() ;
+                                                    foreach (var itemUnqBug in advisories.Select( r => r.bugIDs).ToList())
+                                                    {
+                                                        foreach (var itemInnerUnqBug in itemUnqBug)
+                                                        {
+                                                            if (!(uniqueBugCount.Contains(itemInnerUnqBug)))
+                                                            {
+                                                                uniqueBugCount.Add(itemInnerUnqBug);
+                                                            }
+                                                        }
+
+                                                    }
+                                            <td>@uniqueBugCount.Count().ToString()</td>
+                                            }
+                                        </tr>
+
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
