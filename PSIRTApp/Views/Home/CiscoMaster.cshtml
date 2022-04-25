@@ -80,6 +80,9 @@
                                             <th>
                                                 IP Address
                                             </th>
+                                            <th>
+                                                Description
+                                            </th>
 
 
                                             @*@foreach (var key in Model.OrionList[0].Keys)
@@ -233,6 +236,7 @@
                                             <td>@item["Client"].ToString()</td>
                                             <td>@item["Client_Site"].ToString()</td>
                                             <td>@item["IPAddress"].ToString()</td>
+                                            <td>@item["NodeDescription"].ToString()</td>
 
 
                                             @*@foreach (var itemVal in item)

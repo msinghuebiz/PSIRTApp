@@ -33,6 +33,8 @@
                         <div class="table-responsive">
                             @if (Model.List.advisories.Count() > 0)
                             {
+                                Model.DistinctList.Sort();
+
                                 <table id="complex_head_col" class="table table-striped table-bordered display" style="width:100%">
                                     <thead>
                                         <tr>
