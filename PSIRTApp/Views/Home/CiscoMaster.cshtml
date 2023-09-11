@@ -83,7 +83,28 @@
                                             <th>
                                                 Description
                                             </th>
+                                            <th>
+                                                Recommendation from UEBIZ
+                                            </th>
+                                            <th>
+                                                Recommendation action customer
+                                            </th>
+                                            <th>
+                                                Category
+                                            </th>
+                                            <th>
+                                                Severity
+                                            </th>
+                                            <th>SW: End of Maintenance Release Date</th>
+                                            <th>SW: End of Vulnerability/Security Support of OS</th>
+                                            <th>HW: End of Sale Date</th>
+                                            <th>HW: End of Routine Failure Analysis Date</th>
+                                            <th>HW: End of New Service Attachment Date</th>
+                                            <th>HW: End of Service Contract Renewal Date</th>
+                                            <th>HW: Last Date of Support</th>
 
+
+                                            
 
                                             @*@foreach (var key in Model.OrionList[0].Keys)
         {
@@ -110,7 +131,7 @@
 
                                             }
                                             var productID = item["c_HW_Model"].ToString();
-
+                                            var currentEOD = Model.EOLList.EOXRecord.Where(r => r.EOLProductID.ToLower() == productID.ToLower()).FirstOrDefault();
                                             //var currentCriticalBugList = 0;
                                             //var currentHighBugList = 0;
                                             //var currentlowBugList = 0;
@@ -237,8 +258,118 @@
                                             <td>@item["Client_Site"].ToString()</td>
                                             <td>@item["IPAddress"].ToString()</td>
                                             <td>@item["NodeDescription"].ToString()</td>
+                                             @if (item["Rpt_Recommendation_from_Uebiz"] == null)
+                                            {
+                                            <td></td>
+                                            }
+                                            else
+                                            {
+                                            <td>@item["Rpt_Recommendation_from_Uebiz"].ToString()</td>
+                                            }
+                                            @if (item["Rpt_Recommendation_Action_Customer"] == null)
+                                            {
+                                            <td></td>
+                                            }
+                                            else
+                                            {
+                                            <td>@item["Rpt_Recommendation_Action_Customer"].ToString()</td>
+                                            }
+                                             @if (item["Site_Category"] == null)
+                                            {
+                                            <td></td>
+                                            }
+                                            else
+                                            {
+                                            <td>@item["Site_Category"].ToString()</td>
+                                            }
+                                              @if (item["Site_Severity"] == null)
+                                            {
+                                            <td></td>
+                                            }
+                                            else
+                                            {
+                                            <td>@item["Site_Severity"].ToString()</td>
+                                            }
+                                            @if (currentEOD == null)
+                                            {
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            }
+                                            else
+                                            {
+                                            @if (currentEOD.EndOfSWMaintenanceReleases.value.HasValue)
+                                                {
+                                            <td>@currentEOD.EndOfSWMaintenanceReleases.value.Value.ToString("yyyy/MM/dd")</td>
 
+                                                }
+                                                else
+                                                {
+                                            <td></td>
+                                                }
+                                            @if (currentEOD.EndOfSecurityVulSupportDate.value.HasValue)
+                                                {
+                                            <td>@currentEOD.EndOfSecurityVulSupportDate.value.Value.ToString("yyyy/MM/dd")</td>
 
+                                                }
+                                                else
+                                                {
+                                            <td></td>
+                                                }
+                                            @if (currentEOD.EndOfSaleDate.value.HasValue)
+                                                {
+                                            <td>@currentEOD.EndOfSaleDate.value.Value.ToString("yyyy/MM/dd")</td>
+
+                                                }
+                                                else
+                                                {
+                                            <td></td>
+                                                }
+                                            @if (currentEOD.EndOfRoutineFailureAnalysisDate.value.HasValue)
+                                                {
+                                            <td>@currentEOD.EndOfRoutineFailureAnalysisDate.value.Value.ToString("yyyy/MM/dd")</td>
+
+                                                }
+                                                else
+                                                {
+                                            <td></td>
+                                                }
+                                            @if (currentEOD.EndOfSvcAttachDate.value.HasValue)
+                                                {
+                                            <td>@currentEOD.EndOfSvcAttachDate.value.Value.ToString("yyyy/MM/dd")</td>
+
+                                                }
+                                                else
+                                                {
+                                            <td></td>
+                                                }
+
+                                            @if (currentEOD.EndOfServiceContractRenewal.value.HasValue)
+                                                {
+                                            <td>@currentEOD.EndOfServiceContractRenewal.value.Value.ToString("yyyy/MM/dd")</td>
+
+                                                }
+                                                else
+                                                {
+                                            <td></td>
+                                                }
+                                            @if (currentEOD.LastDateOfSupport.value.HasValue)
+                                                {
+                                            <td>@currentEOD.LastDateOfSupport.value.Value.ToString("yyyy/MM/dd")</td>
+
+                                                }
+                                                else
+                                                {
+                                            <td></td>
+                                                }
+
+                                            }
+                                            
+                                            
                                             @*@foreach (var itemVal in item)
         {
 

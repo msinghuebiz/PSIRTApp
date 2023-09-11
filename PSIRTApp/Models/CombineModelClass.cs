@@ -101,7 +101,7 @@ namespace PSIRTApp.Models
             var resultAuth = await command.GetAuthToken(_EOLclientID, _EOLclientserect);
             foreach (var item in HWlimitList)
             {
-                var result = await command.GetWebResponse<EOXResultByProduct>("https://api.cisco.com/supporttools/eox/rest/5/EOXByProductID/1/", string.Join(",", item.Value).ToString() + "?responseencoding=json", resultAuth);
+                var result = await command.GetWebResponse<EOXResultByProduct>("https://apix.cisco.com/supporttools/eox/rest/5/EOXByProductID/1/", string.Join(",", item.Value).ToString() + "?responseencoding=json", resultAuth);
                 if ((result != null) && (result.EOXRecord != null))
                     listEOL.EOXRecord.AddRange(result.EOXRecord);
             }
@@ -211,7 +211,7 @@ namespace PSIRTApp.Models
             var resultAuth = await command.GetAuthToken(_EOLclientID, _EOLclientserect);
             foreach (var item in HWlimitList)
             {
-                var result = await command.GetWebResponse<EOXResultByProduct>("https://api.cisco.com/supporttools/eox/rest/5/EOXByProductID/1/", string.Join(",", item.Value).ToString() + "?responseencoding=json", resultAuth);
+                var result = await command.GetWebResponse<EOXResultByProduct>("https://apix.cisco.com/supporttools/eox/rest/5/EOXByProductID/1/", string.Join(",", item.Value).ToString() + "?responseencoding=json", resultAuth);
                 if ((result != null) && (result.EOXRecord != null))
                     listEOL.EOXRecord.AddRange(result.EOXRecord);
             }
@@ -352,7 +352,7 @@ namespace PSIRTApp.Models
             var resultAuth = await command.GetAuthToken(_EOLclientID, _EOLclientserect);
             foreach (var item in HWlimitList)
             {
-                var result = await command.GetWebResponse<EOXResultByProduct>("https://api.cisco.com/supporttools/eox/rest/5/EOXByProductID/1/", string.Join(",", item.Value).ToString() + "?responseencoding=json", resultAuth);
+                var result = await command.GetWebResponse<EOXResultByProduct>("https://apix.cisco.com/supporttools/eox/rest/5/EOXByProductID/1/", string.Join(",", item.Value).ToString() + "?responseencoding=json", resultAuth);
                 if (result.EOXRecord != null)
                     listEOL.EOXRecord.AddRange(result.EOXRecord);
             }
@@ -380,7 +380,7 @@ namespace PSIRTApp.Models
             var distImpact = new List<string>();
 
 
-            string fields = "Rpt_SW, Client, Client_Site, Client as C_Client,NodeName,IPAddress,HW_Model as c_HW_Model,HW_SerialNumber as c_HW_SerialNumber, Rpt_Liz_Notes , Rpt_BugID_s_ as c_Rpt_BugID_s_, Rpt_BugIDs_Critical as c_Rpt_BugIDs_Critical, Rpt_BugIDs_High as c_Rpt_BugIDs_High, Rpt_BugIDs_Medium as c_Rpt_BugIDs_Medium, Rpt_IOS_Recommended as c_Rpt_IOS_Recommended, IOSVersion, n.Description, NodeDescription, StatusDescription ";
+            string fields = "Rpt_SW, Client, Client_Site, Client as C_Client,NodeName,IPAddress,HW_Model as c_HW_Model,HW_SerialNumber as c_HW_SerialNumber, Rpt_Liz_Notes , Rpt_BugID_s_ as c_Rpt_BugID_s_, Rpt_BugIDs_Critical as c_Rpt_BugIDs_Critical, Rpt_BugIDs_High as c_Rpt_BugIDs_High, Rpt_BugIDs_Medium as c_Rpt_BugIDs_Medium, Rpt_IOS_Recommended as c_Rpt_IOS_Recommended, IOSVersion, n.Description, NodeDescription, StatusDescription, Rpt_Recommendation_from_Uebiz, Rpt_Recommendation_Action_Customer , Site_Category, Site_Severity";
 
 
             //where IOSVersion = '15.2(2)E5''
@@ -487,18 +487,18 @@ namespace PSIRTApp.Models
             {
                 var listVuln = new Vuln();
                 listVuln.advisories = new List<VulnStructure>();
-                listVuln = await GetAPIAdvisoryLists("advisories/ios?version={0}", currentIOSVersion.ToString());
+                listVuln = await GetAPIAdvisoryLists("advisories/ios?version={0}&productNames=true", currentIOSVersion.ToString());
                 if (listVuln.advisories.Count() == 0 )
                 {
-                    listVuln = await GetAPIAdvisoryLists("advisories/iosxe?version={0}", currentIOSVersion.ToString());
+                    listVuln = await GetAPIAdvisoryLists("advisories/iosxe?version={0}&productNames=true", currentIOSVersion.ToString());
                 }
                 if (listVuln.advisories.Count() == 0)
                 {
-                    listVuln = await GetAPIAdvisoryLists("advisories/nxos?version={0}", currentIOSVersion.ToString());
+                    listVuln = await GetAPIAdvisoryLists("advisories/nxos?version={0}&productNames=true", currentIOSVersion.ToString());
                 }
                 if (listVuln.advisories.Count() == 0)
                 {
-                    listVuln = await GetAPIAdvisoryLists("advisories/aci?version={0}", currentIOSVersion.ToString());
+                    listVuln = await GetAPIAdvisoryLists("advisories/aci?version={0}&productNames=true", currentIOSVersion.ToString());
                 }
 
 
@@ -595,7 +595,7 @@ namespace PSIRTApp.Models
             var resultAuth = await command.GetAuthToken(_EOLclientID, _EOLclientserect);
             foreach (var item in HWlimitList)
             {
-                var result = await command.GetWebResponse<EOXResultByProduct>("https://api.cisco.com/supporttools/eox/rest/5/EOXByProductID/1/", string.Join(",", item.Value).ToString() + "?responseencoding=json", resultAuth);
+                var result = await command.GetWebResponse<EOXResultByProduct>("https://apix.cisco.com/supporttools/eox/rest/5/EOXByProductID/1/", string.Join(",", item.Value).ToString() + "?responseencoding=json", resultAuth);
                 if (result.EOXRecord != null)
                     listEOL.EOXRecord.AddRange(result.EOXRecord);
             }
@@ -682,7 +682,7 @@ namespace PSIRTApp.Models
             var resultAuth = await command.GetAuthToken(_EOLclientID, _EOLclientserect);
             foreach (var item in HWlimitList)
             {
-                var result = await command.GetWebResponse<EOXResultByProduct>("https://api.cisco.com/supporttools/eox/rest/5/EOXByProductID/1/", string.Join(",", item.Value).ToString() + "?responseencoding=json", resultAuth);
+                var result = await command.GetWebResponse<EOXResultByProduct>("https://apix.cisco.com/supporttools/eox/rest/5/EOXByProductID/1/", string.Join(",", item.Value).ToString() + "?responseencoding=json", resultAuth);
                 if (result.EOXRecord != null)
                     listEOL.EOXRecord.AddRange(result.EOXRecord);
             }
@@ -750,7 +750,7 @@ namespace PSIRTApp.Models
             var resultAuth = await command.GetAuthToken(_clientID, _clientserect);
             foreach (var item in HWlimitList)
             {
-                var result = await command.GetWebResponse<EOXResultByProduct>("https://api.cisco.com/supporttools/eox/rest/5/EOXByProductID/1/", string.Join(",", item.Value).ToString() + "?responseencoding=json", resultAuth);
+                var result = await command.GetWebResponse<EOXResultByProduct>("https://apix.cisco.com/supporttools/eox/rest/5/EOXByProductID/1/", string.Join(",", item.Value).ToString() + "?responseencoding=json", resultAuth);
                 if (result.EOXRecord != null )
                     listEOL.EOXRecord.AddRange(result.EOXRecord );
             }

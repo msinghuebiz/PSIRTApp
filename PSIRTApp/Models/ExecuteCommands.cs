@@ -23,33 +23,53 @@ namespace PSIRTApp.Models
 
             try
             {
-                string strXMLServer = string.Format("https://cloudsso.cisco.com/as/token.oauth2?grant_type=client_credentials&client_id={0}&client_secret={1}", client_ID, clientsecret);
+
+                using var httpClient = new HttpClient();
+
+                var content = new FormUrlEncodedContent(new[]
+                {
+            new KeyValuePair<string, string>("grant_type", "client_credentials"),
+            new KeyValuePair<string, string>("client_id", client_ID),
+            new KeyValuePair<string, string>("client_secret", clientsecret)
+        });
+
+                using var response1 = await httpClient.PostAsync("https://id.cisco.com/oauth2/default/v1/token", content);
+
+                if (!response1.IsSuccessStatusCode)
+                {
+                    
+                }
+
+                var responseContent = await response1.Content.ReadAsStringAsync();
+             //   Console.WriteLine(responseContent);
+
+//                string strXMLServer = string.Format("https://id.cisco.com/oauth2/default/v1/token?grant_type=client_credentials&client_id={0}&client_secret={1}", client_ID, clientsecret);
 
                 
 
-                var client = new HttpClient();
-                client.DefaultRequestHeaders.Add("cache-control", "no-cache");
-                client.DefaultRequestHeaders.Add("Host", "cloudsso.cisco.com");
-                client.DefaultRequestHeaders.TryAddWithoutValidation("content-type", "application/x-www-form-urlencoded");
-                client.DefaultRequestHeaders.TryAddWithoutValidation    ("Content-Length", "119");
-                
+//                var client = new HttpClient();
+//                client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/x-www-form-urlencoded");
+//                client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "*/*");
+//                client.DefaultRequestHeaders.TryAddWithoutValidation("Connection", "keep-alive");
 
 
-                
-                var response = await client.PostAsync(strXMLServer, null);
 
-                //var client = new RestClient(strXMLServer);
-                //var request1 = new RestRequest();
-                //request1.Method = Method.Post;
-                //request1.AddHeader("cache-control", "no-cache");
-                //request1.AddHeader("content-type", "application/x-www-form-urlencoded");
-                //request1.AddHeader("Host", "cloudsso.cisco.com");
-                //request1.AddHeader("Content-Length", "119");
-                //// request1.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=abc&client_secret=123", ParameterType.RequestBody);
-                //RestResponse response1 = client.ExecuteAsync(request1).Result;
-var stringValue = await response.Content.ReadAsStringAsync();
 
-                var result = JsonConvert.DeserializeObject<AuthResult>(stringValue);
+
+//                var response = await client.PostAsync(strXMLServer, null);
+
+//                //var client = new RestClient(strXMLServer);
+//                //var request1 = new RestRequest();
+//                //request1.Method = Method.Post;
+//                //request1.AddHeader("cache-control", "no-cache");
+//                //request1.AddHeader("content-type", "application/x-www-form-urlencoded");
+//                //request1.AddHeader("Host", "cloudsso.cisco.com");
+//                //request1.AddHeader("Content-Length", "119");
+//                //// request1.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=abc&client_secret=123", ParameterType.RequestBody);
+//                //RestResponse response1 = client.ExecuteAsync(request1).Result;
+//var stringValue = await response.Content.ReadAsStringAsync();
+
+                var result = JsonConvert.DeserializeObject<AuthResult>(responseContent);
                 responseFromServer = result.access_token;
             }
             catch (Exception ex)
@@ -71,7 +91,6 @@ var stringValue = await response.Content.ReadAsStringAsync();
                 var client = new HttpClient();
                 client.DefaultRequestHeaders.Add("cache-control", "no-cache");
                 client.DefaultRequestHeaders.Add("Accept-Encoding", " gzip,deflate");
-                client.DefaultRequestHeaders.Add("Host", "api.cisco.com");
                 client.DefaultRequestHeaders.Add("Accept", "*/*");
                 client.DefaultRequestHeaders.TryAddWithoutValidation("content-type", "application/x-www-form-urlencoded");
                 client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "Bearer " + authToken);
