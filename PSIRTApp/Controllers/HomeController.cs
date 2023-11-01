@@ -37,7 +37,7 @@ namespace PSIRTApp.Controllers
            // var command = new ExecuteCommands();
            // var resultAuth = command.GetAuthToken("shnhwdngb9ktxgp343wv4k35", "qaJqbjCPPaJwceFbudNxkPMR").Result;
 
-           // var result = command.GetWebResponse<EOXResultByProduct>("https://api.cisco.com/commerce/ORDER/v2/sync/getSubscriptionDetails", "", resultAuth);
+           // var result = command.GetWebResponse<EOXResultByProduct>("https://apix.cisco.com/commerce/ORDER/v2/sync/getSubscriptionDetails", "", resultAuth);
 
             var ss = string.Empty;
         }
@@ -674,7 +674,7 @@ namespace PSIRTApp.Controllers
                     var updatedURLText = string.Format(urlText, item);
                     var command = new ExecuteCommands();
                     var resultAuth = command.GetAuthToken(clientID, clientserect).Result;
-                    var resultList = command.GetWebResponse<Vuln>("https://api.cisco.com/security/", updatedURLText, resultAuth).Result;
+                    var resultList = command.GetWebResponse<Vuln>("https://apix.cisco.com/security/", updatedURLText, resultAuth).Result;
                     if (resultList.advisories != null)
                     {
                         foreach (var itemList in resultList.advisories)
@@ -800,7 +800,7 @@ namespace PSIRTApp.Controllers
             {
                 var command = new ExecuteCommands();
                 var resultAuth = await command.GetAuthToken(clientID, clientserect);
-                filledModel.List = await command.GetWebResponse<Vuln>("https://api.cisco.com/security/", "advisories/all", resultAuth);
+                filledModel.List = await command.GetWebResponse<Vuln>("https://apix.cisco.com/security/", "advisories/all", resultAuth);
             }
             else
             {
