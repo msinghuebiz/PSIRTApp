@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -391,7 +392,7 @@ namespace PSIRTApp.Models
             }
             listOrion = await GetListOrion(fields, searchQuery);
             var HWList = new List<string>();
-            var IOSVersionList = new List<string>();
+            var IOSVersionList = new Dictionary<string,string>();
             var HWlimitList = new Dictionary<int, List<string>>();
             var vulrCount = new Dictionary<string, int>();
             var count = 1;
@@ -427,13 +428,26 @@ namespace PSIRTApp.Models
                         if (spliVal.Count() > 0)
                         {
                             iosfromRow = spliVal[0];
-                            iosfromRow = iosfromRow.Trim().Replace(" ", "");
+                            //  iosfromRow = iosfromRow.Trim().Replace(" ", "");
+                            iosfromRow = iosfromRow.Trim();
                         }
                         if (!(string.IsNullOrEmpty(iosfromRow)))
                         {
-                            if (!(IOSVersionList.Contains(iosfromRow)))
+                            var description = item["NodeDescription"].ToString();
+                            var iosType = "all";
+                            if (description.Contains("IOS"))
                             {
-                                IOSVersionList.Add(iosfromRow.Trim());
+                                iosType = "ios";
+                            }
+                            else if (description.Contains("NX-OS"))
+                            {
+                                iosType = "nxos";
+
+                            }
+                            var rCheckValue = new KeyValuePair<string, string>(iosfromRow, iosType);
+                            if (!IOSVersionList.Contains(rCheckValue))
+                            {
+                                IOSVersionList.Add(iosfromRow.Trim(), iosType);
                             }
                         }
                     }
@@ -460,54 +474,60 @@ namespace PSIRTApp.Models
                 //    listEOL.EOXRecord.AddRange(result.EOXRecord);
             }
 
-            //var resultAuthBug = await command.GetAuthToken(_clientID, _clientserect);
+            var resultAuthBug = await command.GetAuthToken(_clientID, _clientserect);
 
-            //foreach (var item in HWlimitList)
-            //{
+            foreach (var item in HWlimitList)
+            {
 
-            //    foreach (var itemInner in item.Value)
-            //    {
-            //        try
-            //        {
-            //            var resultweb = await command.GetWebResponse<Bugs>("https://api.cisco.com/bug/v2.0/bugs/products/product_id/" + itemInner, "?page_index=1&modified_date=5", resultAuth);
-            //            if (resultweb != null)
-            //            {
-            //                var bugs = new List<Bug>();
-            //                bugs.AddRange(resultweb.bugs.ToList());
+                foreach (var itemInner in item.Value)
+                {
+                    try
+                    {
+                    
+                        var resultweb = await command.GetWebResponse<Bugs>("https://apix.cisco.com/bug/v2.0/bugs/products/product_id/" + itemInner, "?page_index=1&modified_date=5", resultAuthBug);
+                        if (resultweb != null)
+                        {
+                            var bugs = new List<Bug>();
+                            bugs.AddRange(resultweb.bugs.ToList());
 
-            //                listBug.Add( itemInner, bugs);
+                            listBug.Add(itemInner, bugs);
 
-            //            }
-            //        }
-            //        catch ( Exception ex)
-            //        {
+                        }
+                    }
+                    catch (Exception ex)
+                    {
 
-            //        }
-            //    }
-            //}
+                    }
+                }
+            }
 
             foreach (var currentIOSVersion in IOSVersionList)
             {
                 var listVuln = new Vuln();
                 listVuln.advisories = new List<VulnStructure>();
-                listVuln = await GetAPIAdvisoryLists("advisories/ios?version={0}&productNames=true", currentIOSVersion.ToString());
-                if (listVuln.advisories.Count() == 0 )
+                
+                
+                if (currentIOSVersion.Value == "ios")
                 {
-                    listVuln = await GetAPIAdvisoryLists("advisories/iosxe?version={0}&productNames=true", currentIOSVersion.ToString());
+                    listVuln = await GetAPIAdvisoryLists("advisories/ios?version={0}&productNames=true", currentIOSVersion.Key.ToString());
+                }
+                if (listVuln.advisories.Count() == 0  && currentIOSVersion.Value == "ios")
+                {
+                    listVuln = await GetAPIAdvisoryLists("advisories/iosxe?version={0}&productNames=true", currentIOSVersion.Key.ToString());
+                }
+                if (listVuln.advisories.Count() == 0 && currentIOSVersion.Value == "nxos")
+                {
+                    listVuln = await GetAPIAdvisoryLists("advisories/nxos?version={0}&productNames=true", currentIOSVersion.Key.ToString());
                 }
                 if (listVuln.advisories.Count() == 0)
                 {
-                    listVuln = await GetAPIAdvisoryLists("advisories/nxos?version={0}&productNames=true", currentIOSVersion.ToString());
-                }
-                if (listVuln.advisories.Count() == 0)
-                {
-                    listVuln = await GetAPIAdvisoryLists("advisories/aci?version={0}&productNames=true", currentIOSVersion.ToString());
+                    listVuln = await GetAPIAdvisoryLists("advisories/aci?version={0}&productNames=true", currentIOSVersion.Key.ToString());
                 }
 
 
                 // listVuln = await GetAPIAdvisoryLists("advisories/ios?version={0}", currentIOSVersion);
-                vulrCount.Add(currentIOSVersion, listVuln.advisories.Count());
-                listAdvisoryList.Add(currentIOSVersion, listVuln.advisories);
+                vulrCount.Add(currentIOSVersion.Key, listVuln.advisories.Count());
+                listAdvisoryList.Add(currentIOSVersion.Key, listVuln.advisories);
                 var disntImpact = listVuln.advisories.Select(r => r.sir).Distinct().ToList();
                 foreach (var itemImpact in disntImpact)
                 {
