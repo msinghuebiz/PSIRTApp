@@ -691,7 +691,41 @@ namespace PSIRTApp.Controllers
             }
             return listResult;
         }
+
         
+
+        public async Task<IActionResult> IndexComparisionYear()
+        {
+            var model = new IndexModel();
+            model.advisoryID = string.Empty;
+            model.List = new Vuln();
+            model.List.advisories = new List<VulnStructure>();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> IndexComparisionYear(IndexModel filledModel)
+        {
+            if (!(string.IsNullOrEmpty(filledModel.advisoryID)))
+            {
+
+                filledModel.List = await GetAPIAdvisoryLists("advisories/year/{0}", filledModel.advisoryID);
+
+                foreach (var item in filledModel.List.advisories )
+                {
+                    var objCoparision = new ComparisionAdvisory();
+                    // get the Last URL of the advisory 
+                    var resulTruePositivetList = objCoparision.GetTruePositive(item.publicationUrl);
+                    var resultFalseNegativeList = objCoparision.GetTrueNegative(item.publicationUrl);
+
+                }
+
+
+            }
+            return View(filledModel);
+        }
+
 
         public async Task<IActionResult> IndexYear()
     {
